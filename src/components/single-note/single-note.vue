@@ -3,7 +3,7 @@
 		<div class="wrapper">
 			<div class="top">
 				<div class="time">{{date}}</div>
-				<div class="close">
+				<div class="close" @click="deleteNote(note.id)">
 					<svg class="icon" aria-hidden="true"> <use xlink:href="#icon-close"></use> </svg>
 				</div>
 			</div>
@@ -11,8 +11,8 @@
 				{{note.content}}
 			</div>
 			<div class="rank">
-				<svg class="icon star" aria-hidden="true" v-for="(star, index) in note.rank" :key="index"> <use xlink:href="#icon-star"></use> </svg>
-				<svg class="icon" aria-hidden="true" v-for="(star, index) in (5 - note.rank)" :key="index"> <use xlink:href="#icon-star"></use> </svg>
+				<svg class="icon star" aria-hidden="true" v-for="(star, index) in note.rank"> <use xlink:href="#icon-star"></use> </svg>
+				<svg class="icon" aria-hidden="true" v-for="(star, index) in (5 - note.rank)"> <use xlink:href="#icon-star"></use> </svg>
 			</div>
 			<div class="state">
 				<div class="not-done" v-show="!note.state"><svg class="icon" aria-hidden="true"> <use xlink:href="#icon-correct"></use> </svg></div>
@@ -22,25 +22,29 @@
 	</div>
 </template>
 
-<script lang='ts'>
-import Vue from 'vue'
-
-export default Vue.extend( {
+<script>
+export default{
 	props: {
 		note: Object,
 	},
 	computed: {
-		date(): string{
+		date(){
 			let time = new Date(this.note.date)
-			let year: number|string = time.getFullYear()
-			let month: number|string = time.getMonth() + 1
-			let day: number|string = time.getDate()
+			let year = time.getFullYear()
+			let month = time.getMonth() + 1
+			let day = time.getDate()
 			if(month < 10) month = '0' + month
 			if(day < 10) day = '0' + day			
 			return `${year}年${month}月${day}日`
 		}
+	},
+	methods: {
+		async deleteNote(id){
+			await this.$http.delete(`https://sticky-note-b6d2c.firebaseio.com/notes/${id}.json/`)
+			this.$emit('deleteSuccess', id)
+		}
 	}
-})
+}
 </script>
 
 <style lang="stylus" scoped>
@@ -49,16 +53,14 @@ export default Vue.extend( {
 
 	.single-note
 		position absolute
-		background: #FFFFFF
-		border: 1px solid #E6E6E6
-		border-radius: 4px
 		width 25%
 		box-sizing border-box
-		margin 1em
-		padding-bottom 1em
+		padding 1em 1em 0 0
 		.wrapper
-			width 80%
-			margin 0 auto
+			background: #FFFFFF
+			border: 1px solid #E6E6E6
+			border-radius: 4px
+			padding 1em
 			.top
 				display flex
 				align-items center 
@@ -86,7 +88,6 @@ export default Vue.extend( {
 			.state
 				border-radius 100px
 				overflow hidden
-				flex-center()
 				height 24px
 				width 58px
 				color white
@@ -95,10 +96,12 @@ export default Vue.extend( {
 					width 100%
 					font-size 12px
 					background-color $blue
+					flex-center()
 				.not-done
 					height 100%
 					width 100%
 					flex-center()
 					background-color $green
+					shadow()
 
 </style>

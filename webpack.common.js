@@ -13,7 +13,7 @@ function resolve(dir) {
 
 module.exports = {
 	entry: {
-		bundle: './src/main.ts',
+		bundle: './src/main.js',
 		vendor: ["axios", "vue", "vue-router", "vuex"]
 	},
 	output: {
@@ -23,7 +23,7 @@ module.exports = {
 	},
 	resolve: {
 		// 文件扩展名，写明以后就不需要每个文件写后缀
-		extensions: ['.js', '.ts', '.vue', '.json'],
+		extensions: ['.js', '.vue', '.json'],
 		alias: {
 			'@': resolve('src'),
 			// 不加会报: You are using the runtime-only build of Vue where the template compiler is not available
@@ -44,20 +44,20 @@ module.exports = {
 					}
 				}
 			},
-			{
-				test: /\.tsx?$/,
-				loader: 'ts-loader',
-				exclude: /node_modules/,
-				options: {
-					appendTsSuffixTo: [/\.vue$/]
-				}
-			},
-			// TS 自带 bable
 			// {
-			// 	test: /\.js$/,
-			// 	use: 'babel-loader',
-			// 	include: [resolve('src')]
+			// 	test: /\.tsx?$/,
+			// 	loader: 'ts-loader',
+			// 	exclude: /node_modules/,
+			// 	options: {
+			// 		appendTsSuffixTo: [/\.vue$/]
+			// 	}
 			// },
+			// TS 自带 bable
+			{
+				test: /\.js$/,
+				use: 'babel-loader',
+				include: [resolve('src')]
+			},
 			{
 				test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
 				use: [{

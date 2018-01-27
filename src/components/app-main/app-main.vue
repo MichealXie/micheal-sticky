@@ -1,38 +1,56 @@
 <template>
 	<div class="app-main">
 		<div class="main">
-			<single-note v-for="note in notes" :note="note"></single-note>
-			<div class="goup"> <svg class="icon" aria-hidden="true"> <use xlink:href="#icon-up"></use> </svg> </div>
-			<div class="add"> <svg class="icon" aria-hidden="true"> <use xlink:href="#icon-plus"></use> </svg> </div>
-			<div class="delete">删除成功</div>
+			<single-note v-for="note in notes" :note="note" :key="note.date" ref="single-note" v-on:deleteSuccess="deleteSuccess"></single-note>
 		</div>
 	</div>
 </template>
 
-<script lang='ts'>
-import Vue from 'vue'
-import axios from 'axios'
+<script>
 import singleNote from '@/components/single-note/single-note.vue'
 
-export default Vue.extend( {
+export default{
 	components: {
 		'single-note': singleNote
 	},
 	data () {
 		return {
 			notes: [],
+			topArr: [85, 85, 85, 85],
+			leftArr : [0,0,0,0],
 		}
 	},
 	methods: {
 		async getNotes(){
-			let data = await axios.get('https://sticky-note-b6d2c.firebaseio.com/notes.json')
+			let data = await this.$http.get('https://sticky-note-b6d2c.firebaseio.com/notes.json')
+			// 添加 id 方便 delete
+			for(let item in data.data){
+				data.data[item].id = item
+			}
 			this.notes = data.data
+			this.$nextTick( () => {
+				this.waterfall()
+			})
+		},
+		waterfall(){
+			for(let note of this.$refs['single-note']){
+				let minTop = Math.min(...this.topArr)
+				let minTopIndex = this.topArr.indexOf(minTop)
+				note.$el.style.top = this.topArr[minTopIndex] + 'px'
+				this.topArr[minTopIndex] += parseInt(getComputedStyle(note.$el).height)
+				note.$el.style.left = minTopIndex * parseInt(getComputedStyle(note.$el).width) + 'px'
+				this.leftArr[minTopIndex] += parseInt(getComputedStyle(note.$el).width)
+			}
+		},
+		deleteSuccess(id){
+			this.$delete(this.notes, id)
+			this.$emit('showDelete')
 		}
 	},
 	created () {
 		this.getNotes()
 	}
-})
+}
 </script>
 
 <style lang="stylus" scoped>
@@ -50,35 +68,4 @@ export default Vue.extend( {
 			margin 0 auto
 			height 100%
 			padding-top 85px
-			.goup, .add, .delete
-				position fixed 
-				flex-center()
-				shadow()
-				font-size 2em
-			.goup
-				bottom 168px
-				right 240px
-				background-color white
-				color $green
-				height 64px
-				width 64px
-				border-radius 50%
-			.add
-				bottom 64px		
-				right 240px	
-				height 64px
-				width 64px
-				color white
-				border-radius 50%
-				background-color $green
-			.delete
-				bottom 100px		
-				middleX()
-				height 55px
-				width 215px
-				font-size 20px
-				background-color white
-				color $green
-				border-radius: 100px
-
 </style>

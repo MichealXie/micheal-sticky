@@ -18,12 +18,10 @@
 	</div>
 </template>
 
-<script lang='ts'>
-import Vue from 'vue'
+<script>
+export default{
 
-export default Vue.extend( {
-
-})
+}
 </script>
 
 <style lang="stylus" scoped>
@@ -37,6 +35,7 @@ export default Vue.extend( {
 		border-radius: 4px
 		font-size 18px
 		background-color white
+		z-index 100
 		.header
 			display flex
 			align-items center
