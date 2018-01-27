@@ -53,7 +53,7 @@ export default{
 
 	.single-note
 		position absolute
-		width 25%
+		width calc(230px + 1em)
 		box-sizing border-box
 		padding 1em 1em 0 0
 		.wrapper

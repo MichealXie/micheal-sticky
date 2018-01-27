@@ -1,11 +1,15 @@
 <template>
 	<div id="app">
 		<app-header></app-header>
-		<app-main v-on:showDelete="showDelete()"></app-main>
+		<app-main v-on:showDelete="showDelete()"></app-main>	
 		<div class="goup"> <svg class="icon" aria-hidden="true"> <use xlink:href="#icon-up"></use> </svg> </div>
 		<div class="add" @click="openNewNote()"> <svg class="icon" aria-hidden="true"> <use xlink:href="#icon-plus"></use> </svg> </div>
-		<div class="delete" v-show="isDeleteShow">删除成功</div>
-		<div class="success" v-show="isSuccessShow">创建成功</div>
+		<transition name="fade">		
+			<div class="delete" v-show="isDeleteShow">删除成功</div>
+		</transition>
+		<transition name="fade">		
+			<div class="success" v-show="isSuccessShow">创建成功</div>
+		</transition>
 		<transition name="fade">
 			<new-note v-show="isNewNoteShow" v-on:closeNewNote="closeNewNote()" v-on:postSuccess="postSuccess"></new-note>
 		</transition>
@@ -37,7 +41,7 @@ export default{
 		closeNewNote(){
 			this.isNewNoteShow = false
 		},
-		postSuccess(){
+		postSuccess(note){
 			this.isSuccessShow = true
 			setTimeout( () => {
 				this.isSuccessShow = false
@@ -49,7 +53,7 @@ export default{
 				this.isDeleteShow = false
 			}, 1000)
 		}
-	}
+	},
 }
 </script>
 

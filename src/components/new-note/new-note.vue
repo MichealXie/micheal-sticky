@@ -24,6 +24,8 @@
 </template>
 
 <script>
+import { bus } from '../../main.js'
+
 export default {
 	data () {
 		return {
@@ -42,14 +44,18 @@ export default {
 			}
 		},
 		async postNote(){
-			await this.$http.post('https://sticky-note-b6d2c.firebaseio.com/notes.json',{
+			let note = {
 				content: this.content,
 				date: new Date().valueOf(),
 				rank: this.rank,
 				state: false
-			})
+			}
+			let data = await this.$http.post('https://sticky-note-b6d2c.firebaseio.com/notes.json',note)
+			note.id = data.data.name
+			// 成功后
 			this.$emit('closeNewNote')
-			this.$emit('postSuccess')
+			// 设置新的 note
+			bus.$emit('postSuccess', note)
 		},
 		close(){
 			this.$emit('closeNewNote')

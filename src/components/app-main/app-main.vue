@@ -1,13 +1,16 @@
 <template>
 	<div class="app-main">
 		<div class="main">
-			<single-note v-for="note in notes" :note="note" :key="note.date" ref="single-note" v-on:deleteSuccess="deleteSuccess"></single-note>
+			<transition-group name="fade">
+				<single-note v-for="note in notes" :note="note" :key="note.date" ref="single-note" v-on:deleteSuccess="deleteSuccess"></single-note>
+			</transition-group>
 		</div>
 	</div>
 </template>
 
 <script>
 import singleNote from '@/components/single-note/single-note.vue'
+import { bus } from '../../main.js'
 
 export default{
 	components: {
@@ -33,6 +36,8 @@ export default{
 			})
 		},
 		waterfall(){
+			this.topArr = [85, 85, 85, 85]
+			this.leftArr = [0,0,0,0]
 			for(let note of this.$refs['single-note']){
 				let minTop = Math.min(...this.topArr)
 				let minTopIndex = this.topArr.indexOf(minTop)
@@ -49,6 +54,13 @@ export default{
 	},
 	created () {
 		this.getNotes()
+		// post 成功后本地 notes 添加一个选项!
+		bus.$on('postSuccess', (note) => {
+			this.$set(this.notes, note.id, note)
+			this.$nextTick( () => {
+				this.waterfall()
+			})
+		})
 	}
 }
 </script>
