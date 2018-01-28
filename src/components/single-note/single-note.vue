@@ -11,12 +11,15 @@
 				{{note.content}}
 			</div>
 			<div class="rank">
-				<svg class="icon star" aria-hidden="true" v-for="(star, index) in note.rank"> <use xlink:href="#icon-star"></use> </svg>
-				<svg class="icon" aria-hidden="true" v-for="(star, index) in (5 - note.rank)"> <use xlink:href="#icon-star"></use> </svg>
+				<svg class="icon" aria-hidden="true" v-for="star in 5" ref="star"> <use xlink:href="#icon-star"></use> </svg>
 			</div>
-			<div class="state">
-				<div class="not-done" v-show="!note.state"><svg class="icon" aria-hidden="true"> <use xlink:href="#icon-correct"></use> </svg></div>
-				<div class="done" v-show="note.state"> 已完成</div>
+			<div class="state" @click="toggleState()">
+				<transition name="fade">
+					<div class="not-done" v-show="!note.state"><svg class="icon" aria-hidden="true"> <use xlink:href="#icon-correct"></use> </svg></div>
+				</transition>
+				<transition name="fade">				
+					<div class="done" v-show="note.state"> 已完成</div>
+				</transition>
 			</div>
 		</div>
 	</div>
@@ -40,9 +43,22 @@ export default{
 	},
 	methods: {
 		async deleteNote(id){
-			await this.$http.delete(`https://sticky-note-b6d2c.firebaseio.com/notes/${id}.json/`)
+			// 删除的话, 可以先在本地删除再发请求
 			this.$emit('deleteSuccess', id)
+			await this.$http.delete(`https://sticky-note-b6d2c.firebaseio.com/notes/${id}.json/`)
+		},
+		async toggleState(){
+			this.note.state = !this.note.state
+			this.$http.patch(`https://sticky-note-b6d2c.firebaseio.com/notes/${this.note.id}.json`, this.note)
+		},
+		setStar(){
+			for(let i = 0; i < this.note.rank;i++){
+				this.$refs.star[i].classList.add('star')
+			}
 		}
+	},
+	mounted () {
+		this.setStar()
 	}
 }
 </script>
@@ -53,7 +69,7 @@ export default{
 
 	.single-note
 		position absolute
-		width calc(230px + 1em)
+		width 25%
 		box-sizing border-box
 		padding 1em 1em 0 0
 		.wrapper
@@ -73,6 +89,7 @@ export default{
 				.close
 					color: #D8D8D8
 					font-size 14px
+					cursor pointer
 			.content
 				font-size: 16px
 				color: #4D4D4D
@@ -83,6 +100,7 @@ export default{
 				color #DBDBDB
 				.icon
 					padding 16px 4px
+					cursor pointer
 				.star
 					color $blue
 			.state
@@ -91,6 +109,7 @@ export default{
 				height 24px
 				width 58px
 				color white
+				cursor pointer
 				.done
 					height 100%
 					width 100%

@@ -58,6 +58,7 @@ export default{
 				.item
 					margin 0 15px
 					padding 15px 0
+					cursor pointer
 					&.active
 						color $green
 						font-size 20px
@@ -70,6 +71,7 @@ export default{
 				border-radius: 100px
 				background-color $green
 				color white
+				cursor pointer
 				.icon
 					padding 0 10px
 					font-size 2em

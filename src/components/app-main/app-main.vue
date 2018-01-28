@@ -50,6 +50,9 @@ export default{
 		deleteSuccess(id){
 			this.$delete(this.notes, id)
 			this.$emit('showDelete')
+			this.$nextTick( () => {
+				this.waterfall()
+			})
 		}
 	},
 	created () {

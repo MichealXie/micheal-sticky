@@ -85,6 +85,7 @@ export default{
 				height 64px
 				width 64px
 				border-radius 50%
+				cursor pointer
 			.add
 				bottom 64px		
 				right 240px	
@@ -93,6 +94,7 @@ export default{
 				color white
 				border-radius 50%
 				background-color $green
+				cursor pointer
 			.delete
 				bottom 100px		
 				middleX()

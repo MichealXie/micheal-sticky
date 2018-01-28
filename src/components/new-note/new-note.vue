@@ -56,6 +56,8 @@ export default {
 			this.$emit('closeNewNote')
 			// 设置新的 note
 			bus.$emit('postSuccess', note)
+			// 清空 note
+			this.content = ''
 		},
 		close(){
 			this.$emit('closeNewNote')
@@ -65,7 +67,7 @@ export default {
 		this.$nextTick( () => {
 			this.$refs.star[0].classList.add('star')
 		})
-	}
+	},
 }
 </script>
 
@@ -98,6 +100,7 @@ export default {
 					top 1em
 					font-size 1.5em
 					color #D8D8D8
+					cursor pointer
 				.title
 					height 40px
 					flex-center()
@@ -123,6 +126,7 @@ export default {
 						color #DBDBDB
 						.icon
 							padding-left 10px
+							cursor pointer
 						.star
 							color $blue
 				.add-btn
@@ -134,4 +138,5 @@ export default {
 						flex-center()
 						background-color $green
 						border-radius: 100px
+						cursor pointer
 </style>
