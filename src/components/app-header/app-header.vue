@@ -6,9 +6,9 @@
 				<span class="product">在线便签</span>
 			</div>
 			<div class="menu">
-				<span class="item active all">全部</span>
-				<span class="item unfinished">未完成</span>
-				<span class="item finished">已完成</span>
+				<span class="item" :class="{active: state === 'all'}" @click="changeNotes('all')">全部</span>
+				<span class="item" :class="{active: state === false}" @click="changeNotes(false)">未完成</span>
+				<span class="item" :class="{active: state === true}" @click="changeNotes(true)">已完成</span>
 			</div>
 			<div class="login">
 				<svg class="icon" aria-hidden="true"> <use xlink:href="#icon-github"></use> </svg>
@@ -19,8 +19,20 @@
 </template>
 
 <script>
-export default{
+import { bus } from '../../main.js'
 
+export default{
+	data () {
+		return {
+			state: 'all'
+		}
+	},
+	methods: {
+		changeNotes(state){
+			this.state = state
+			bus.$emit('changeNotes', state)
+		}
+	}
 }
 </script>
 
@@ -59,6 +71,7 @@ export default{
 					margin 0 15px
 					padding 15px 0
 					cursor pointer
+					transition .3s all
 					&.active
 						color $green
 						font-size 20px

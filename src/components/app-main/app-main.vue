@@ -2,7 +2,7 @@
 	<div class="app-main">
 		<div class="main">
 			<transition-group name="fade">
-				<single-note v-for="note in notes" :note="note" :key="note.date" ref="single-note" v-on:deleteSuccess="deleteSuccess"></single-note>
+				<single-note v-for="note in filteredNotes" :note="note" :key="note.date" ref="single-note" v-on:deleteSuccess="deleteSuccess"></single-note>
 			</transition-group>
 		</div>
 	</div>
@@ -21,6 +21,24 @@ export default{
 			notes: [],
 			topArr: [85, 85, 85, 85],
 			leftArr : [0,0,0,0],
+			state: 'all'
+		}
+	},
+	computed: {
+		filteredNotes(){
+			if(this.state === 'all'){
+				return this.notes
+			}
+			else{
+				let ret = []
+				for( let i in this.notes){
+					ret.push(this.notes[i])
+				}
+				this.notes = ret
+			}
+			return this.notes.filter( (note) => {
+				return note.state === this.state
+			})
 		}
 	},
 	methods: {
@@ -60,6 +78,13 @@ export default{
 		// post 成功后本地 notes 添加一个选项!
 		bus.$on('postSuccess', (note) => {
 			this.$set(this.notes, note.id, note)
+			this.$nextTick( () => {
+				this.waterfall()
+			})
+		})
+		// 监听note 的 state
+		bus.$on('changeNotes', (state) => {
+			this.state =state
 			this.$nextTick( () => {
 				this.waterfall()
 			})

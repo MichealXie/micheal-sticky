@@ -13,12 +13,12 @@
 			<div class="rank">
 				<svg class="icon" aria-hidden="true" v-for="star in 5" ref="star"> <use xlink:href="#icon-star"></use> </svg>
 			</div>
-			<div class="state" @click="toggleState()">
+			<div class="state" :class="{shadow: note.state === false}" @click="toggleState()">
 				<transition name="fade">
-					<div class="not-done" v-show="!note.state"><svg class="icon" aria-hidden="true"> <use xlink:href="#icon-correct"></use> </svg></div>
+					<div class="not-done" v-if="!note.state"><svg class="icon" aria-hidden="true"> <use xlink:href="#icon-correct"></use> </svg></div>
 				</transition>
 				<transition name="fade">				
-					<div class="done" v-show="note.state"> 已完成</div>
+					<div class="done" v-if="note.state"> 已完成</div>
 				</transition>
 			</div>
 		</div>
@@ -110,6 +110,8 @@ export default{
 				width 58px
 				color white
 				cursor pointer
+				&.shadow
+					shadow()
 				.done
 					height 100%
 					width 100%
@@ -121,6 +123,5 @@ export default{
 					width 100%
 					flex-center()
 					background-color $green
-					shadow()
 
 </style>
