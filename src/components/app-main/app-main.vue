@@ -2,7 +2,7 @@
 	<div class="app-main">
 		<div class="main">
 			<transition-group name="fade">
-				<single-note v-for="note in filteredNotes" :note="note" :key="note.date" ref="single-note" v-on:deleteSuccess="deleteSuccess"></single-note>
+				<single-note v-for="note in rankedNotes" :note="note" :key="note.date" ref="single-note" v-on:deleteSuccess="deleteSuccess"></single-note>
 			</transition-group>
 		</div>
 	</div>
@@ -21,24 +21,34 @@ export default{
 			notes: [],
 			topArr: [85, 85, 85, 85],
 			leftArr : [0,0,0,0],
-			state: 'all'
+			state: 'all',
+			rank: null,
 		}
 	},
 	computed: {
+		notesArr(){
+			// 因为数据库返回的不是数组, 手动转换一下
+			let ret = []
+			for( let i in this.notes){
+				ret.push(this.notes[i])
+			}
+			return ret
+		},
 		filteredNotes(){
 			if(this.state === 'all'){
-				return this.notes
+				return this.notesArr
 			}
-			else{
-				let ret = []
-				for( let i in this.notes){
-					ret.push(this.notes[i])
-				}
-				this.notes = ret
-			}
-			return this.notes.filter( (note) => {
+			return this.notesArr.filter( (note) => {
 				return note.state === this.state
 			})
+		},
+		rankedNotes(){
+			if(!this.rank) return this.filteredNotes
+			else{
+				return this.filteredNotes.filter( (note) => {
+					return note.rank === this.rank
+				})
+			}
 		}
 	},
 	methods: {
@@ -89,6 +99,13 @@ export default{
 				this.waterfall()
 			})
 		})
+		// 监听 sort
+		bus.$on('selectRank', (rank) => {
+			this.rank = rank
+			this.$nextTick( () => {
+				this.waterfall()
+			})
+		})
 		// 自动瀑布流
 		window.onresize = () => {
 			this.waterfall()
@@ -101,6 +118,10 @@ export default{
   @import '../../static/css/var'
   @import '../../static/css/mixin'
 	
+	@media (max-width:1200px) 
+		.main
+			width 90%!important
+
 	.app-main
 		overflow scroll 
 		background-color #F5F5F5
