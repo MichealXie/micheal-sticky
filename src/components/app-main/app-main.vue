@@ -89,6 +89,10 @@ export default{
 				this.waterfall()
 			})
 		})
+		// 自动瀑布流
+		window.onresize = () => {
+			this.waterfall()
+		}
 	}
 }
 </script>

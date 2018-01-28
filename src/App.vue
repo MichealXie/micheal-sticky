@@ -1,8 +1,8 @@
 <template>
 	<div id="app">
 		<app-header></app-header>
-		<app-main v-on:showDelete="showDelete()"></app-main>	
-		<div class="goup"> <svg class="icon" aria-hidden="true"> <use xlink:href="#icon-up"></use> </svg> </div>
+		<app-main v-on:showDelete="showDelete()" ref="app-main"></app-main>	
+		<div class="goup" @click="goup()"> <svg class="icon" aria-hidden="true"> <use xlink:href="#icon-up"></use> </svg> </div>
 		<div class="add" @click="openNewNote()"> <svg class="icon" aria-hidden="true"> <use xlink:href="#icon-plus"></use> </svg> </div>
 		<transition name="fade">		
 			<div class="delete" v-show="isDeleteShow">删除成功</div>
@@ -11,7 +11,7 @@
 			<div class="success" v-show="isSuccessShow">创建成功</div>
 		</transition>
 		<transition name="fade">
-			<new-note v-show="isNewNoteShow" v-on:closeNewNote="closeNewNote()" v-on:postSuccess="postSuccess"></new-note>
+			<new-note v-show="isNewNoteShow" v-on:closeNewNote="closeNewNote"></new-note>
 		</transition>
 	</div>
 </template>
@@ -35,13 +35,17 @@ export default{
 		}
 	},
 	methods: {
+		goup(){
+			this.$refs['app-main'].$el.scrollTop = 0
+		},
 		openNewNote(){
 			this.isNewNoteShow = true
 		},
-		closeNewNote(){
+		closeNewNote(state){
 			this.isNewNoteShow = false
+			if(state) this.postSuccess()
 		},
-		postSuccess(note){
+		postSuccess(){
 			this.isSuccessShow = true
 			setTimeout( () => {
 				this.isSuccessShow = false
@@ -54,6 +58,13 @@ export default{
 			}, 1000)
 		}
 	},
+	created () {
+		window.addEventListener('keypress', (e) => {
+      if(e.key === 'n' && e.ctrlKey){
+        this.isNewNoteShow = true
+			}
+		})
+	}
 }
 </script>
 

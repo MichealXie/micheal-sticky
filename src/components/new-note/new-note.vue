@@ -6,7 +6,7 @@
 				<div class="close" @click="close()">
 					<svg class="icon" aria-hidden="true"> <use xlink:href="#icon-close"></use> </svg>
 				</div>
-				<textarea class="textarea" placeholder="输入内容" v-model="content"></textarea>
+				<textarea class="textarea" placeholder="输入内容" v-model="content" autofocus @keypress="post($event)"></textarea>
 				<div class="rank">
 					<span class="word">重要星级:</span>
 					<div class="stars">
@@ -53,17 +53,22 @@ export default {
 			let data = await this.$http.post('https://sticky-note-b6d2c.firebaseio.com/notes.json',note)
 			note.id = data.data.name
 			// 成功后
-			this.$emit('closeNewNote')
+			this.$emit('closeNewNote', true)
 			// 设置新的 note
 			bus.$emit('postSuccess', note)
 			// 清空 note
 			this.content = ''
 		},
 		close(){
-			this.$emit('closeNewNote')
+			this.$emit('closeNewNote', false)
+		},
+		post(e){
+			console.log(e);
+			
+			if(e.key === 'Enter' && e.ctrlKey) this.postNote()
 		}
 	},
-	created () {
+	mounted () {
 		this.$nextTick( () => {
 			this.$refs.star[0].classList.add('star')
 		})
