@@ -14,7 +14,7 @@ function resolve(dir) {
 module.exports = {
 	entry: {
 		bundle: './src/main.js',
-		vendor: ["axios", "vue", "vue-router", "vuex"]
+		vendor: ["axios", "vue",]
 	},
 	output: {
 		path: path.join(__dirname, 'dist'),

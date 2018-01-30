@@ -15,7 +15,8 @@
 				</div>
 				<div class="add-btn">
 					<span class="btn" @click="postNote()">
-						添加
+						<span v-show="!isPosting" >添加</span>
+						<svg v-show="isPosting"  class="icon" aria-hidden="true"> <use xlink:href="#icon-loading"></use> </svg>
 					</span>
 				</div>
 			</div>
@@ -30,7 +31,8 @@ export default {
 	data () {
 		return {
 			content: '',
-			rank: 1
+			rank: 1,
+			isPosting: false,
 		}
 	},
 	methods: {
@@ -44,6 +46,9 @@ export default {
 			}
 		},
 		async postNote(){
+			if(this.isPosting) return
+			if(!this.content) return
+			this.isPosting = true
 			let note = {
 				content: this.content,
 				date: new Date().valueOf(),
@@ -58,13 +63,13 @@ export default {
 			bus.$emit('postSuccess', note)
 			// 清空 note
 			this.content = ''
+			this.rank = 1
+			this.isPosting = false
 		},
 		close(){
 			this.$emit('closeNewNote', false)
 		},
 		post(e){
-			console.log(e);
-			
 			if(e.key === 'Enter' && e.ctrlKey) this.postNote()
 		}
 	},
@@ -144,4 +149,8 @@ export default {
 						background-color $green
 						border-radius: 100px
 						cursor pointer
+						shadow()
+						.icon
+							font-size 2.5em
+							animation spin 2s infinite linear
 </style>

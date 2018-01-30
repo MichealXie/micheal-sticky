@@ -8,7 +8,7 @@
 				</div>
 			</div>
 			<div class="content">
-				{{note.content}}
+				<p v-for="item in contentArr">{{item}}</p>
 			</div>
 			<div class="rank">
 				<svg class="icon" aria-hidden="true" v-for="star in 5" ref="star"> <use xlink:href="#icon-star"></use> </svg>
@@ -39,6 +39,10 @@ export default{
 			if(month < 10) month = '0' + month
 			if(day < 10) day = '0' + day			
 			return `${year}年${month}月${day}日`
+		},
+		contentArr(){
+			if(this.note.content)
+			return this.note.content.split('\n')
 		}
 	},
 	methods: {
